@@ -22,8 +22,15 @@ pipeline {
         stage("build image") {
             steps {
                 script {
-                    echo 'build image'
-                    //gv.buildImage()
+
+                    echo 'building the docker image...'
+                    withCredentials([
+                        usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASS', usernameVariable: 'USER')
+                                    ]) {
+                        sh 'docker build -t ramon101/my-java-repo:webapp-1.0 .'
+                        sh 'echo $PASS | docker login -u $USER --password-stdin'
+                        sh 'docker push ramon101/my-java-repo:webapp-1.0'
+                                    }
                 }
             }
 
